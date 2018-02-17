@@ -9,6 +9,7 @@ use Magento\Backend\App\Action;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
+use Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend;
 use Magento\Eav\Model\Entity\Attribute\Frontend\AbstractFrontend;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResponseInterface;
@@ -55,7 +56,10 @@ class Export extends AbstractAction
             try {
                 /** @var AbstractFrontend $frontend */
                 $frontend = $this->productResource->getAttribute($attributeCode)->setStoreId(0)->getFrontend();
-                if (in_array($attribute->getFrontendInput(), ['multiselect', 'select'])) {
+                if ($product->getData($attributeCode) === null) {
+                    $exportData[$attributeCode] = '';
+                } elseif (in_array($attribute->getFrontendInput(), ['multiselect', 'select']) &&
+                    $attribute->getBackend() instanceof ArrayBackend) {
                     $options = [];
                     foreach (explode(',', $product->getData($attributeCode)) as $option) {
                         $options[] = $frontend->getOption($option);
