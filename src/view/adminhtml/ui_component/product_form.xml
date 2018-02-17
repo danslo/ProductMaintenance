@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright © 2018 Rubic. All rights reserved.
+    See LICENSE.txt for license details.
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="buttons" xsi:type="array">
+            <item name="button-export-product" xsi:type="string">Rubic\ProductMaintenance\Block\Adminhtml\Product\Edit\Button\ExportButton</item>
+            <item name="button-import-product" xsi:type="string">Rubic\ProductMaintenance\Block\Adminhtml\Product\Edit\Button\ImportButton</item>
+        </item>
+    </argument>
+</form>
