@@ -1,6 +1,6 @@
 # Product Maintenance for Magento 2
 
-Managing your products from the Magento 2 backend can be a tedious process. This module allows easy maintenance of your Magento 2 products by making it easy to export (single) products to and from CSV files.
+Managing your products from the Magento 2 backend can be a tedious process. This module allows easy maintenance of your Magento 2 products by making it easy to import and export (single) products using CSV files.
 
 You can choose your own product directory, for example a mounted Google Drive folder (using [google-drive-ocamlfuse](https://github.com/astrada/google-drive-ocamlfuse)) from which you can then make quick edits using your favorite editor, like Google Sheets.
 
