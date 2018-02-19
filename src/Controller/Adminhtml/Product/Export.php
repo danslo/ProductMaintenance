@@ -9,109 +9,76 @@ use Magento\Backend\App\Action;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
-use Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend;
-use Magento\Eav\Model\Entity\Attribute\Frontend\AbstractFrontend;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Phrase;
+use Magento\ImportExport\Model\Export as ExportModel;
+use Magento\ImportExport\Model\ExportFactory as ExportFactory;
 
 class Export extends AbstractAction
 {
-    const MULTIVALUE_SEPARATOR = '|';
-
     /**
      * @var ProductResource
      */
     private $productResource;
 
     /**
+     * @var ExportFactory
+     */
+    private $exportFactory;
+
+    /**
      * @param Action\Context $context
      * @param ProductRepositoryInterface $productRepository
      * @param ScopeConfigInterface $scopeConfig
      * @param ProductResource $productResource
+     * @param ExportFactory $exportFactory
      */
     public function __construct(
         Action\Context $context,
         ProductRepositoryInterface $productRepository,
         ScopeConfigInterface $scopeConfig,
-        ProductResource $productResource
+        ProductResource $productResource,
+        ExportFactory $exportFactory
     ) {
         parent::__construct($context, $productRepository, $scopeConfig);
         $this->productResource = $productResource;
-    }
-
-    /**
-     * Gets the data to export.
-     *
-     * @param Product $product
-     * @return array
-     */
-    private function getExportData($product)
-    {
-        $exportData = ['sku' => $product->getSku(), 'product_websites' => 'base'];
-        foreach ($product->getAttributes() as $attribute) {
-            $attributeCode = $attribute->getAttributeCode();
-            try {
-                /** @var AbstractFrontend $frontend */
-                $frontend = $this->productResource->getAttribute($attributeCode)->setStoreId(0)->getFrontend();
-                if ($product->getData($attributeCode) === null) {
-                    $exportData[$attributeCode] = '';
-                } elseif (in_array($attribute->getFrontendInput(), ['multiselect', 'select']) &&
-                    $attribute->getBackend() instanceof ArrayBackend) {
-                    $options = [];
-                    foreach (explode(',', $product->getData($attributeCode)) as $option) {
-                        $options[] = $frontend->getOption($option);
-                    }
-                    $exportData[$attributeCode] = count($options) ?
-                        implode(self::MULTIVALUE_SEPARATOR, $options) : '';
-                } else {
-                    $value = $frontend->getValue($product);
-                    if (is_scalar($value)) {
-                        $exportData[$attributeCode] = $value;
-                    } elseif ($value instanceof Phrase) {
-                        $exportData[$attributeCode] = $value->getText();
-                    } else {
-                        $exportData[$attributeCode] = '';
-                    }
-                }
-            } catch (\Exception $e) {}
-        }
-        $exportData['tax_class_name'] = $exportData['tax_class_id'];
-        unset($exportData['tax_class_id']);
-        return $exportData;
-    }
-
-    /**
-     * Encodes data for csv output.
-     *
-     * @param string $value
-     * @return string
-     */
-    private function encodeData($value)
-    {
-        $value = str_replace('\\"','"',$value);
-        $value = str_replace('"','\"',$value);
-        return '"'.$value.'"';
+        $this->exportFactory = $exportFactory;
     }
 
     /**
      * Writes product data to CSV.
      *
      * @param string $sku
-     * @param array $data
+     * @param string $data
      * @return void
      */
     private function writeProductData($sku, $data)
     {
         $productDirectory = $this->getProductDirectory($sku);
         @mkdir($productDirectory . 'images', 0777, true);
+        file_put_contents($this->getProductCsvFile($sku), $data);
+    }
 
-        $handle = fopen($this->getProductCsvFile($sku), 'w');
-        fputcsv($handle, array_keys($data));
-        fputs($handle, implode(",", array_map([$this, 'encodeData'], $data))."\r\n");
-        fclose($handle);
+    /**
+     * Gets product export data by SKU.
+     *
+     * @param string $sku
+     * @return string
+     * @throws LocalizedException
+     */
+    private function getProductExportData($sku)
+    {
+        $exporter = $this->exportFactory->create([
+            'data' => [
+                ExportModel::FILTER_ELEMENT_GROUP => ['sku' => $sku],
+                'entity' => 'catalog_product',
+                'file_format' => 'csv'
+            ]
+        ]);
+        return $exporter->export();
     }
 
     /**
@@ -119,13 +86,15 @@ class Export extends AbstractAction
      *
      * @return ResultInterface|ResponseInterface
      * @throws NoSuchEntityException
+     * @throws LocalizedException
      */
     public function execute()
     {
+
         $productId = $this->_request->getParam('product_id');
         /** @var Product $product */
         $product = $this->getProductById($productId);
-        $exportData = $this->getExportData($product);
+        $exportData = $this->getProductExportData($product->getSku());
         $this->writeProductData($product->getSku(), $exportData);
 
         $this->messageManager->addSuccessMessage('Exported product.');

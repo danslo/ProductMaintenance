@@ -15,6 +15,7 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use League\Csv\Reader as CsvReader;
+use Magento\ImportExport\Model\Import as ImportModel;
 
 class Import extends AbstractAction
 {
@@ -45,7 +46,6 @@ class Import extends AbstractAction
         parent::__construct($context, $productRepository, $scopeConfig);
         $this->importer = $importer;
         $this->directoryList = $directoryList;
-        $this->importer->setMultipleValueSeparator(Export::MULTIVALUE_SEPARATOR);
     }
 
     /**
@@ -106,8 +106,10 @@ class Import extends AbstractAction
         $product = $this->getProductById($productId);
         $sku = $product->getSku();
         $data = $this->readCsv($this->getProductCsvFile($sku));
-        $data[0]['additional_images'] = implode(Export::MULTIVALUE_SEPARATOR, $this->getAdditionalImages($sku));
-
+        $data[0]['additional_images'] = implode(
+            ImportModel::DEFAULT_GLOBAL_MULTI_VALUE_SEPARATOR,
+            $this->getAdditionalImages($sku)
+        );
         try {
             $this->importer->processImport($data);
             $this->messageManager->addSuccessMessage($this->importer->getLogTrace());
