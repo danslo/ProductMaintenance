@@ -14,6 +14,14 @@ For importing products, we use [FireGento_FastSimpleImport2](https://github.com/
 $ composer require rubic/magento2-module-product-maintenance
 ```
 
+## Usage
+When opening a product in the backend, you'll have two extra buttons; Export and Import. When clicking Export, a folder is created in the given path in the configuration (`Stores > Configuration > Services > Product Maintenance`)) with the product CSV and images. After editing the CSV, click Import to import the new data.
+
+These actions can also be found in the product grid.
+
+## Extra
+Install [FireGento_ExtendedImport2](https://github.com/firegento/FireGento_ExtendedImport2) if you want the importer to automatically add new attribute options.
+
 ## License
 
 Copyright 2018 Rubic

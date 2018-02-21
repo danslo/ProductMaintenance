@@ -19,6 +19,16 @@ abstract class AbstractAction extends Action
     const XML_PATH_PRODUCT_DIRECTORY = 'product_maintenance/general/product_directory';
 
     /**
+     * Path to product edit page
+     */
+    const CATALOG_PRODUCT_EDIT_PATH = 'catalog/product/edit';
+
+    /**
+     * Path to product grid
+     */
+    const CATALOG_PRODUCT_GRID_PATH = 'catalog/product/index';
+
+    /**
      * @var ProductRepositoryInterface
      */
     private $productRepository;

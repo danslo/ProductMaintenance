@@ -14,5 +14,8 @@
     "require": {
         "firegento/fastsimpleimport": "^1.1.0",
         "league/csv": "^8.2.3"
+    },
+    "suggest": {
+        "firegento/extendedimport": "Allows automatic creation of new attribute values"
     }
 }

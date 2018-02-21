@@ -90,7 +90,6 @@ class Export extends AbstractAction
      */
     public function execute()
     {
-
         $productId = $this->_request->getParam('product_id');
         /** @var Product $product */
         $product = $this->getProductById($productId);
@@ -99,7 +98,16 @@ class Export extends AbstractAction
 
         $this->messageManager->addSuccessMessage('Exported product.');
         $redirect = $this->resultRedirectFactory->create();
-        $redirect->setPath('catalog/product/edit', ['id' => $productId]);
+
+        $returnPath = self::CATALOG_PRODUCT_EDIT_PATH;
+        $params = ['id' => $productId];
+
+        if ($this->_request->getParam('toGrid')) {
+            $returnPath = self::CATALOG_PRODUCT_GRID_PATH;
+            $params = [];
+        }
+
+        $redirect->setPath($returnPath, $params);
         return $redirect;
     }
 }
