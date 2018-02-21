@@ -74,6 +74,7 @@ class Export extends AbstractAction
         $exporter = $this->exportFactory->create([
             'data' => [
                 ExportModel::FILTER_ELEMENT_GROUP => ['sku' => $sku],
+                'strict_sku_filter' => true,
                 'entity' => 'catalog_product',
                 'file_format' => 'csv'
             ]
