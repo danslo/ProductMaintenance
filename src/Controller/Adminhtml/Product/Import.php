@@ -118,7 +118,16 @@ class Import extends AbstractAction
         }
 
         $redirect = $this->resultRedirectFactory->create();
-        $redirect->setPath('catalog/product/edit', ['id' => $productId]);
+
+        $returnPath = self::CATALOG_PRODUCT_EDIT_PATH;
+        $params = ['id' => $productId];
+
+        if ($this->_request->getParam('toGrid')) {
+            $returnPath = self::CATALOG_PRODUCT_GRID_PATH;
+            $params = [];
+        }
+
+        $redirect->setPath($returnPath, $params);
         return $redirect;
     }
 }
