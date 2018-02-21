@@ -3,4 +3,7 @@
     <type name="Magento\CatalogImportExport\Model\Export\Product">
         <plugin name="set_strict_sku_filter" type="Rubic\ProductMaintenance\Plugin\SetStrictSkuFilterPlugin" />
     </type>
+    <type name="Magento\Catalog\Ui\Component\Listing\Columns\ProductActions">
+        <plugin name="add_maintenance_actions" type="Rubic\ProductMaintenance\Plugin\AddMaintenanceActionsPlugin" />
+    </type>
 </config>

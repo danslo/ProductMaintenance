@@ -35,17 +35,16 @@ class SetStrictSkuFilterPlugin
      * based on the SKU.
      *
      * @param Product $product
-     * @param callable $proceed
      * @param Collection $collection
      * @return Collection
      */
-    public function aroundFilterAttributeCollection(Product $product, callable $proceed, Collection $collection)
+    public function afterFilterAttributeCollection(Product $product, Collection $collection)
     {
         $parameters = $this->getExportModelParameters($product);
         if ($parameters['strict_sku_filter'] ?? false) {
             $skuAttribute = $collection->getItemByColumnValue('attribute_code', 'sku');
             $skuAttribute->setFilterOptions(true);
         }
-        return $proceed($collection);
+        return $collection;
     }
 }
