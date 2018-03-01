@@ -13,7 +13,7 @@
     },
     "require": {
         "firegento/fastsimpleimport": "^1.1.0",
-        "league/csv": "^8.2.3"
+        "league/csv": "^9.1.2"
     },
     "suggest": {
         "firegento/extendedimport": "Allows automatic creation of new attribute values"

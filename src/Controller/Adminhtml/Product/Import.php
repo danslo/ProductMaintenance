@@ -58,7 +58,8 @@ class Import extends AbstractAction
     {
         $csv = CsvReader::createFromPath($path);
         $csv->setDelimiter(',');
-        return iterator_to_array($csv->fetchAssoc(), false);
+        $csv->setHeaderOffset(0);
+        return iterator_to_array($csv->getRecords(), false);
     }
 
     /**
