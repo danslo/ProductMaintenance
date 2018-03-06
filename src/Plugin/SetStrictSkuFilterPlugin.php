@@ -7,21 +7,21 @@ namespace Rubic\ProductMaintenance\Plugin;
 
 use Magento\CatalogImportExport\Model\Export\Product;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection;
+use Rubic\ProductMaintenance\Helper\Reflection as ReflectionHelper;
 
 class SetStrictSkuFilterPlugin
 {
     /**
-     * Gets the protected parameters, as no public method is exposed.
-     *
-     * @param Product $product
-     * @return array
+     * @var ReflectionHelper
      */
-    private function getExportModelParameters(Product $product)
+    private $reflectionHelper;
+
+    /**
+     * @param ReflectionHelper $reflectionHelper
+     */
+    public function __construct(ReflectionHelper $reflectionHelper)
     {
-        $object = new \ReflectionObject($product);
-        $property = $object->getProperty('_parameters');
-        $property->setAccessible(true);
-        return $property->getValue($product);
+        $this->reflectionHelper = $reflectionHelper;
     }
 
     /**
@@ -40,7 +40,7 @@ class SetStrictSkuFilterPlugin
      */
     public function afterFilterAttributeCollection(Product $product, Collection $collection)
     {
-        $parameters = $this->getExportModelParameters($product);
+        $parameters = $this->reflectionHelper->getAccessibleObjectProperty($product, '_parameters')->getValue($product);
         if ($parameters['strict_sku_filter'] ?? false) {
             $skuAttribute = $collection->getItemByColumnValue('attribute_code', 'sku');
             $skuAttribute->setFilterOptions(true);

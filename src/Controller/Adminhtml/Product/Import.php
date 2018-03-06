@@ -53,6 +53,7 @@ class Import extends AbstractAction
      *
      * @param string $path
      * @return array
+     * @throws \League\Csv\Exception
      */
     private function readCsv($path)
     {
@@ -99,6 +100,7 @@ class Import extends AbstractAction
      *
      * @return ResultInterface|ResponseInterface
      * @throws NoSuchEntityException
+     * @throws \League\Csv\Exception
      */
     public function execute()
     {

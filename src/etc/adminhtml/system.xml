@@ -14,6 +14,11 @@
                 <field id="product_directory" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Product Directory</label>
                 </field>
+                <field id="separate_attribute_columns" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Separate Attribute Columns</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>If enabled, puts user defined attribute in separate columns instead of using additional_attributes column.</comment>
+                </field>
             </group>
         </section>
     </system>

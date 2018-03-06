@@ -8,6 +8,7 @@
         <product_maintenance>
             <general>
                 <product_directory>/tmp</product_directory>
+                <separate_attribute_columns>0</separate_attribute_columns>
             </general>
         </product_maintenance>
     </default>
