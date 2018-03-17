@@ -34,6 +34,7 @@ class AddMaintenanceActionsPlugin
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
+                if (!isset($item['entity_id'])) continue;
                 foreach (['export', 'import'] as $actionType) {
                     $item[$productActions->getData('name')][$actionType] = [
                         'href' => $this->url->getUrl(
